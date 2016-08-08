@@ -1,4 +1,4 @@
 basic-haskell
 =============
 
-Tring out Haskell following [this tutorial](http://learnyouahaskell.com/starting-out).
+Trying out Haskell following [this tutorial](http://learnyouahaskell.com/starting-out).
