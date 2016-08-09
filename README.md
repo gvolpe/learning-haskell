@@ -1,4 +1,4 @@
-basic-haskell
+learning-haskell
 =============
 
 Learning Haskell following [this tutorial](http://learnyouahaskell.com/chapters).
