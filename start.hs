@@ -63,6 +63,7 @@ combination = [adj ++ " " ++ noun | adj <- adjectives, noun <- nouns]
 
 length' xs = sum [1 | _ <- xs]   
 
+removeNonUppercase :: [Char] -> [Char] -- Explicit type definition
 removeNonUppercase st = [ c | c <- st, c `elem` ['A'..'Z']]
 
 -- Tuples
