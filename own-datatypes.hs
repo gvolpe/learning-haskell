@@ -221,3 +221,111 @@ numsTree = foldr treeInsert EmptyTree [8,6,4,1,7,3,5]
 
 inTree1 = 8 `treeElem` numsTree  
 inTree2 = 100 `treeElem` numsTree
+
+------- typeclasses 102
+
+-- creating a typeclass
+--class Eq a where  
+--    (==) :: a -> a -> Bool  
+--    (/=) :: a -> a -> Bool  
+--    x == y = not (x /= y)  
+--    x /= y = not (x == y)
+
+-- creating a type
+data TrafficLight = Red | Yellow | Green
+
+-- deriving typeclass Eq manually
+instance Eq TrafficLight where  
+    Red == Red = True  
+    Green == Green = True  
+    Yellow == Yellow = True  
+    _ == _ = False
+
+instance Show TrafficLight where  
+    show Red = "Red light"  
+    show Yellow = "Yellow light"  
+    show Green = "Green light"
+
+tl1 = Red == Red
+tl2 = Red `elem` [Red, Yellow, Green]
+
+-- derivation of typeclass for type constructor Option
+instance Eq m => Eq (Option m) where  
+    Some x == Some y = x == y  
+    None == None = True  
+    _ == _ = False 
+
+-- yes no typeclass (like in js) 
+class YesNo a where  
+    yesno :: a -> Bool
+
+instance YesNo Int where  
+    yesno 0 = False  
+    yesno _ = True
+
+instance YesNo [a] where  
+    yesno [] = False  
+    yesno _ = True
+
+instance YesNo Bool where  
+    yesno = id -- identity
+
+instance YesNo (Maybe a) where  
+    yesno (Just _) = True  
+    yesno Nothing = False
+
+instance YesNo TrafficLight where  
+    yesno Red = False  
+    yesno _ = True
+
+-- playing with the instances
+yn1 = yesno $ length []  
+yn2 = yesno "haha"  
+yn3 = yesno ""  
+yn4 = yesno $ Just 0  
+yn5 = yesno True  
+yn6 = yesno []  
+yn7 = yesno [0,0,0]  
+
+-------- Functor typeclass
+
+-- for deriviation Functor needs a type constructor as a type and not a concrete type
+
+--instance Functor [] where  
+--    fmap = map
+
+f1 = fmap (*2) [1..3]
+
+-- map on Maybe
+f2 = fmap (*2) (Just 200)  
+f3 = fmap (*2) Nothing
+
+-- Functor instance for Tree (our data type above)
+instance Functor Tree where  
+    fmap f EmptyTree = EmptyTree  
+    fmap f (Node x leftsub rightsub) = Node (f x) (fmap f leftsub) (fmap f rightsub)
+
+f4 = fmap (*2) EmptyTree  
+f5 = fmap (*4) (foldr treeInsert EmptyTree [5,7,3,2,1,7])
+
+-- kinds
+class Tofu t where  
+    tofu :: j a -> t a j
+
+data Frank a b  = Frank {frankField :: b a} deriving (Show)
+
+-- kind:  * -> (* -> *) - > *
+
+x1 = Frank {frankField = Just "HAHA"}
+x2 = Frank {frankField = Node 'a' EmptyTree EmptyTree}
+
+instance Tofu Frank where  
+    tofu x = Frank x
+
+x3 = tofu (Just 'a') :: Frank Char Maybe  
+x4 = tofu ["HELLO"] :: Frank [Char] []
+
+data Barry t k p = Barry { yabba :: p, dabba :: t k }
+
+instance Functor (Barry a b) where  
+    fmap f (Barry {yabba = x, dabba = y}) = Barry {yabba = f x, dabba = y}
